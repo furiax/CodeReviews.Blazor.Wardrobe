@@ -1,5 +1,6 @@
 ﻿@page "/overview"
-@inject HttpClient http
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 
@@ -33,11 +34,13 @@ else
                     <td>@cloth.Color</td>
                     <td>@cloth.Brand</td>
                     <td><img src="@cloth.ImageUrl" style="width: 50px; height:50px"/></td>
-                    <td></td>
+                    <td><button class="btn btn-primary" @onclick="@(() => EditClothpiece(cloth.Id))">Edit</button></td>
                 </tr>
             }
         </tbody>
     </table>
+    <button class="btn btn-primary" @onclick="AddClothpiece">Add clothpiece</button>
+
 }
 
 @code {
@@ -45,11 +48,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(500);
-
-        var result = await http.GetFromJsonAsync<List<Clothpiece>>("api/wardrobe");
+        var result = await Http.GetFromJsonAsync<List<Clothpiece>>("api/wardrobe");
         if(result is not null)
             cloths = result;
     }
 
+    void AddClothpiece()
+    {
+        NavigationManager.NavigateTo("edit-clothpiece");
+    }
+    void EditClothpiece(int id)
+    {
+        NavigationManager.NavigateTo($"edit-clothpiece/{id}");
+    }
 }
