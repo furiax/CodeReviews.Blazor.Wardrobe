@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wardrobe", "Wardrobe\Wardro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wardrobe.Client", "Wardrobe\Wardrobe.Client\Wardrobe.Client.csproj", "{5ACA08B6-419E-4F5C-A2AA-E9EA7C79D42C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wardrobe.Shared", "Wardrobe.Shared\Wardrobe.Shared.csproj", "{A533D060-FC55-4AB2-B70A-385CE68EBEEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5ACA08B6-419E-4F5C-A2AA-E9EA7C79D42C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACA08B6-419E-4F5C-A2AA-E9EA7C79D42C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACA08B6-419E-4F5C-A2AA-E9EA7C79D42C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A533D060-FC55-4AB2-B70A-385CE68EBEEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A533D060-FC55-4AB2-B70A-385CE68EBEEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A533D060-FC55-4AB2-B70A-385CE68EBEEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A533D060-FC55-4AB2-B70A-385CE68EBEEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
