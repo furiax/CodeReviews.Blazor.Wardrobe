@@ -1,9 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using Wardrobe.Components;
+using Wardrobe.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents();
+builder.Services.AddDbContext<WardrobeContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
