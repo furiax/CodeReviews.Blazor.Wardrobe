@@ -35,6 +35,7 @@ else
                     <td>@cloth.Brand</td>
                     <td><img src="@cloth.ImageUrl" style="width: 50px; height:50px"/></td>
                     <td><button class="btn btn-primary" @onclick="@(() => EditClothpiece(cloth.Id))">Edit</button></td>
+                    <td><button class="btn btn-danger" @onclick="@(() => DeleteClothpiece(cloth.Id))">Delete</button></td>
                 </tr>
             }
         </tbody>
@@ -48,9 +49,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<List<Clothpiece>>("api/wardrobe");
-        if(result is not null)
-            cloths = result;
+        await LoadWardrobe();
     }
 
     void AddClothpiece()
@@ -61,4 +60,18 @@ else
     {
         NavigationManager.NavigateTo($"edit-clothpiece/{id}");
     }
+    async Task DeleteClothpiece(int id)
+    {
+        await Http.DeleteAsync($"api/wardrobe/{id}");
+        await LoadWardrobe();
+    }
+
+    async Task LoadWardrobe()
+    {
+
+        var result = await Http.GetFromJsonAsync<List<Clothpiece>>("api/wardrobe");
+        if (result is not null)
+            cloths = result;
+    }
+
 }
