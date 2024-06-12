@@ -1,8 +1,7 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using Wardrobe.Client.Pages;
 using Wardrobe.Components;
 using Wardrobe.Context;
-using Wardrobe.Controller;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<WardrobeContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10485760;
+});
 
 var app = builder.Build();
 

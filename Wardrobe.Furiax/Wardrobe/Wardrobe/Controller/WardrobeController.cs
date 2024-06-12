@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wardrobe.Context;
 using Wardrobe.Shared.Entities;
@@ -11,9 +10,11 @@ namespace Wardrobe.Controller
     public class WardrobeController : ControllerBase
     {
         private readonly WardrobeContext _context;
-        public WardrobeController(WardrobeContext context)
+        private readonly IWebHostEnvironment _environment;
+        public WardrobeController(WardrobeContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -66,6 +67,38 @@ namespace Wardrobe.Controller
             await _context.SaveChangesAsync();
 
             return Ok(newCloth);
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImageAsync(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".gif", ".png" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return BadRequest("Invalid file extension. Only .jpg, .jpeg, .gif and .png are allowed.");
+            }
+
+            var uploadPath = Path.Combine(_environment.WebRootPath, "uploads");
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var newFileName = $"{fileName}-{Guid.NewGuid()}{fileExtension}";
+            var filePath = Path.Combine(uploadPath, newFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var fileUrl = $"/uploads/{newFileName}";
+            return Ok(fileUrl);
         }
 
     }

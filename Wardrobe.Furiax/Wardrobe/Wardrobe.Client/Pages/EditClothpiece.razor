@@ -10,13 +10,12 @@
 }
 else
 {
-    <h3>Edit</h3>
+    <h3>Edit Clothpiece</h3>
 }
 
 <EditForm Model="Cloth" OnSubmit="HandleSubmit">
     <div>
         <label for="type">Type</label>
-
         <InputSelect id="type" @bind-Value="Cloth.Type" class="form-control">
             @foreach (ClothType type in Enum.GetValues(typeof(ClothType)))
             {
@@ -33,13 +32,34 @@ else
         <InputText id="brand" @bind-Value="Cloth.Brand" class="form-control" />
     </div>
     <div>
-        <label for="imageUrl">Image Url</label>
-        <InputText id="imageUrl" @bind-Value="Cloth.ImageUrl" class="form-control" />
+        <label for="imageChoice">Choose Image Source</label>
+        <InputSelect id="imageChoice" @bind-Value="ImageChoice" class="form-control">
+            <option value="url">URL</option>
+            <option value="upload">Upload</option>
+        </InputSelect>
     </div>
+    @if (ImageChoice == "url")
+    {
+        <div>
+            <label for="imageUrl">Image URL</label>
+            <InputText id="imageUrl" @bind-Value="Cloth.ImageUrl" class="form-control"></InputText>
+        </div>
+    }
+    else if (ImageChoice == "upload")
+    {
+        <div>
+            <label for="imageUpload">Upload image (Max 10Mb)</label>
+            <InputFile id="imageUpload" OnChange="HandleImageUpload" />
+        </div>    
+    }
+
     <button type="submit" class="btn btn-primary">Save</button>
-    <div>
-        <img src="@Cloth.ImageUrl" style="width: 300px; height:300px"/>
-    </div>
+    @if (!string.IsNullOrEmpty(Cloth.ImageUrl))
+    {
+        <div>
+            <img src="@Cloth.ImageUrl" style="width: 300px; height:300px" />
+        </div>
+    } 
 </EditForm>
 
 
@@ -48,6 +68,7 @@ else
     public int? Id { get; set; }
 
     public Clothpiece Cloth { get; set; } = new Clothpiece();
+    public string ImageChoice { get; set; } = "url";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -60,17 +81,45 @@ else
     }
     async Task HandleSubmit()
     {
+        HttpResponseMessage result;
         if(Id is not null)
         {
-            var result= await Http.PutAsJsonAsync($"api/wardrobe/{Id}", Cloth);
-            Cloth = await result.Content.ReadFromJsonAsync<Clothpiece>();
-            NavigationManager.NavigateTo("overview");
+            result= await Http.PutAsJsonAsync($"api/wardrobe/{Id}", Cloth);
         }
         else
         {
-            var result = await Http.PostAsJsonAsync($"api/wardrobe", Cloth);
-            Cloth = await result.Content.ReadFromJsonAsync<Clothpiece>();
-            NavigationManager.NavigateTo("overview");
+            result = await Http.PostAsJsonAsync($"api/wardrobe", Cloth);
+        }
+
+        if(result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Console.Error.WriteLine($"Error occured: {result.ReasonPhrase}");
+        }
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var maxAllowedSize = 10485760;
+
+        var formFileContent = new MultipartFormDataContent();
+        var streamContent = new StreamContent(file.OpenReadStream(maxAllowedSize));
+        formFileContent.Add(streamContent, "file", file.Name);
+
+        var response = await Http.PostAsync("api/wardrobe/upload", formFileContent);
+
+        if(response.IsSuccessStatusCode)
+        {
+            var imageUrl = await response.Content.ReadAsStringAsync();
+            Cloth.ImageUrl = imageUrl;
+        }
+        else
+        {
+            Console.Error.WriteLine($"Error uploading file: {response.ReasonPhrase}");
         }
     }
 }
