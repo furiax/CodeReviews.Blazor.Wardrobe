@@ -42,6 +42,7 @@ else
             <option value="upload">Upload Image</option>
             <option value="none">No picture</option>
         </InputSelect>
+        <ValidationMessage For="@(() => Cloth.Image)" />
     </div>
     @if (ImageChoice == "url")
     {
@@ -56,6 +57,10 @@ else
             <label for="imageUpload">Upload image (Max 10Mb)</label>
             <InputFile id="imageUpload" OnChange="HandleImageUpload" />
         </div>
+    }
+    else if (ImageChoice == "none")
+    {
+        Cloth.Image = "img/shirt-50.png";
     }
 
     <button type="submit" class="btn btn-primary">Save</button>
@@ -87,10 +92,6 @@ else
     }
     async Task HandleSubmit()
     {
-        if(ImageChoice == "none")
-        {
-            Cloth.Image = "img/shirt-50.png";
-        }
         HttpResponseMessage result;
         if(Id is not null)
         {
