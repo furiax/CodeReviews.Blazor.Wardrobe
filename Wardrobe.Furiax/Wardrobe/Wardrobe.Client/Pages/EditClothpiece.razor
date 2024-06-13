@@ -49,6 +49,7 @@ else
         <div>
             <label for="image">Image URL</label>
             <InputText id="image" @bind-Value="Cloth.Image" class="form-control"></InputText>
+            <ValidationMessage For="@(() => Cloth.Image)" />
         </div>
     }
     else if (ImageChoice == "upload")

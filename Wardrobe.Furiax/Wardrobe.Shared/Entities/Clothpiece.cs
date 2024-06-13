@@ -12,7 +12,8 @@ namespace Wardrobe.Shared.Entities
         [Required(ErrorMessage ="Brand is required, if unknown please type unknown.")]
         [StringLength(50, ErrorMessage ="Brand cannot exceed 50 characters.")]
         public string Brand { get; set; }
-        [Required(ErrorMessage ="Please provide an image or select the No picture option")]   
+        [Required(ErrorMessage ="Please provide an image or select the No picture option")]
+        [ImageUrl(ErrorMessage = "The URL must point to an image file (jpg, jpeg, gif, png, bmp, svg). ")]
         public string Image { get; set; }
     }
 
