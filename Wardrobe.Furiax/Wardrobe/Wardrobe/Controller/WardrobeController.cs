@@ -53,7 +53,7 @@ namespace Wardrobe.Controller
             dbCloth.Type = updatedCloth.Type;
             dbCloth.Color = updatedCloth.Color;
             dbCloth.Brand = updatedCloth.Brand;
-            dbCloth.ImageUrl = updatedCloth.ImageUrl;
+            dbCloth.Image = updatedCloth.Image;
 
             _context.SaveChangesAsync();
 

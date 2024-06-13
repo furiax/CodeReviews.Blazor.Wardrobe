@@ -13,7 +13,9 @@ else
     <h3>Edit Clothpiece</h3>
 }
 
-<EditForm Model="Cloth" OnSubmit="HandleSubmit">
+<EditForm Model="Cloth" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
     <div>
         <label for="type">Type</label>
         <InputSelect id="type" @bind-Value="Cloth.Type" class="form-control">
@@ -26,23 +28,26 @@ else
     <div>
         <label for="color">Color</label>
         <InputText id="color" @bind-Value="Cloth.Color" class="form-control" />
+        <ValidationMessage For="@(()=> Cloth.Color)" />
     </div>
     <div>
         <label for="brand">Brand</label>
         <InputText id="brand" @bind-Value="Cloth.Brand" class="form-control" />
+        <ValidationMessage For="@(()=> Cloth.Brand)" />
     </div>
     <div>
-        <label for="imageChoice">Choose Image Source</label>
+        <label for="imageChoice">Add Image</label>
         <InputSelect id="imageChoice" @bind-Value="ImageChoice" class="form-control">
             <option value="url">URL</option>
-            <option value="upload">Upload</option>
+            <option value="upload">Upload Image</option>
+            <option value="none">No picture</option>
         </InputSelect>
     </div>
     @if (ImageChoice == "url")
     {
         <div>
-            <label for="imageUrl">Image URL</label>
-            <InputText id="imageUrl" @bind-Value="Cloth.ImageUrl" class="form-control"></InputText>
+            <label for="image">Image URL</label>
+            <InputText id="image" @bind-Value="Cloth.Image" class="form-control"></InputText>
         </div>
     }
     else if (ImageChoice == "upload")
@@ -50,14 +55,15 @@ else
         <div>
             <label for="imageUpload">Upload image (Max 10Mb)</label>
             <InputFile id="imageUpload" OnChange="HandleImageUpload" />
-        </div>    
+        </div>
     }
 
     <button type="submit" class="btn btn-primary">Save</button>
-    @if (!string.IsNullOrEmpty(Cloth.ImageUrl))
+
+    @if (!string.IsNullOrEmpty(Cloth.Image))
     {
         <div>
-            <img src="@Cloth.ImageUrl" style="width: 300px; height:300px" />
+            <img src="@Cloth.Image" style="width: 300px; height:300px" />
         </div>
     } 
 </EditForm>
@@ -81,6 +87,10 @@ else
     }
     async Task HandleSubmit()
     {
+        if(ImageChoice == "none")
+        {
+            Cloth.Image = "img/shirt-50.png";
+        }
         HttpResponseMessage result;
         if(Id is not null)
         {
@@ -115,7 +125,7 @@ else
         if(response.IsSuccessStatusCode)
         {
             var imageUrl = await response.Content.ReadAsStringAsync();
-            Cloth.ImageUrl = imageUrl;
+            Cloth.Image = imageUrl;
         }
         else
         {

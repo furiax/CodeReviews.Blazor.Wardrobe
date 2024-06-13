@@ -33,7 +33,7 @@ else
                     <td>@cloth.Type</td>
                     <td>@cloth.Color</td>
                     <td>@cloth.Brand</td>
-                    <td><img src="@cloth.ImageUrl" style="width: 50px; height:50px"/></td>
+                    <td><img src="@cloth.Image" style="width: 50px; height:50px"/></td>
                     <td><button class="btn btn-primary" @onclick="@(() => EditClothpiece(cloth.Id))">Edit</button></td>
                     <td><button class="btn btn-danger" @onclick="@(() => DeleteClothpiece(cloth.Id))">Delete</button></td>
                 </tr>
